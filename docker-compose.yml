@@ -1,0 +1,116 @@
+version: "3.7"
+name: apps-php82
+services:
+    ####################################################################################################
+    # PHP
+    ####################################################################################################
+    php:
+        build: .docker/php
+        container_name: apps-php82-php
+        ports:
+            - 5173:5173
+        volumes:
+            - ./apps:/var/www/public:cached
+        networks:
+            - apps-php82-net
+
+    ####################################################################################################
+    # Nginx
+    ####################################################################################################
+    nginx:
+        image: nginx
+        # image: nginx:1.25.4-alpine-slim
+        container_name: apps-php82-nginx
+        ports:
+            - 80:80
+        volumes:
+            - ./apps:/var/www/public
+            - .docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - .docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+        depends_on:
+            - php
+        networks:
+            - apps-php82-net
+
+    ####################################################################################################
+    # DATABASE (MySQL)
+    ####################################################################################################
+    mysql:
+        image: mysql:8.3
+        container_name: apps-php82-mysql
+        ports:
+            - 3306:3306
+        volumes:
+            - .docker/mysql/data:/var/lib/mysql
+            - .docker/mysql/logs:/var/log/mysql
+            - .docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+            - .docker/mysql/sql:/docker-entrypoint-initdb.d
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: refactorian
+            MYSQL_USER: refactorian
+            MYSQL_PASSWORD: refactorian
+        networks:
+            - apps-php82-net
+
+    ####################################################################################################
+    # phpMyAdmin
+    ####################################################################################################
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: apps-php82-phpmyadmin
+        ports:
+            - 8080:80
+        links:
+            - mysql
+        environment:
+            PMA_HOST: mysql
+            PMA_PORT: 3306
+            PMA_ARBITRARY: 1
+        volumes:
+            - .docker/phpmyadmin/sessions:/sessions
+        networks:
+            - apps-php82-net
+
+    ####################################################################################################
+    # Adminer
+    ####################################################################################################
+    adminer:
+        image: adminer
+        container_name: apps-php82-adminer
+        ports:
+            - 9090:8080
+        depends_on:
+            - mysql
+        networks:
+            - apps-php82-net
+
+    ####################################################################################################
+    # Mailpit
+    ####################################################################################################
+    mail:
+        image: axllent/mailpit:latest
+        container_name: apps-php82-mail
+        ports:
+            - 8025:8025
+            - 1025:1025
+        networks:
+            - apps-php82-net
+
+    ####################################################################################################
+    # Redis
+    ####################################################################################################
+    redis:
+        image: redis:latest
+        container_name: apps-php82-redis
+        command: redis-server --appendonly yes
+        volumes:
+            - .docker/redis/data:/data
+        ports:
+            - 6379:6379
+        networks:
+            - apps-php82-net
+
+networks:
+    apps-php82-net:
+        driver: bridge
