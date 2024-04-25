@@ -4,7 +4,7 @@ Sitio básico para instalar apps de php, ideal para realizar pruebas, soltar la 
 Se ha usado como base el repositorio de [refactorian](https://github.com/refactorian) / [laravel-docker](https://github.com/refactorian/laravel-docker)
 
 
-# Kit de inicio de Docker
+## Kit de inicio de Docker
 - PHP v8.2.x
 - MySQL v8.3.x (default)
 - phpMyAdmin v5.x
@@ -16,11 +16,11 @@ Se ha usado como base el repositorio de [refactorian](https://github.com/refacto
 - Rector v1.x
 - Redis v7.2.x
 
-# Requerimientos
+## Requerimientos
 - Versión estable de [Docker](https://docs.docker.com/engine/install/)
 - Versión compatible de [Docker Compose](https://docs.docker.com/compose/install/#install-compose)
 
-# ¿Cómo implementar?
+## ¿Cómo implementar?
 
 ### ¡Solo por primera vez!
 - `git clone https://github.com/jfuentes3002/docker-php82-basico.git php82`
@@ -32,7 +32,7 @@ Se ha usado como base el repositorio de [refactorian](https://github.com/refacto
 ### A partir de la segunda vez
 - `docker compose up -d`
 
-# Notas
+## Notas
 
 ### App
 - URL: http://localhost
